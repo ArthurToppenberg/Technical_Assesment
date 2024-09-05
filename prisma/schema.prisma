@@ -1,0 +1,42 @@
+// npx prisma migrate dev \n npx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model laws {
+  id                    Int       @id @default(autoincrement())
+  typeid                Int
+  kategoriid            Int
+  statusid              Int
+  titel                 String?
+  titelkort             String?
+  offentlighedskode     String?
+  nummer                String  @unique
+  nummerprefix          String
+  nummernumerisk        String
+  nummerpostfix         String?
+  resume                String?
+  afstemningskonklusion String?
+  periodeid             Int?
+  afgoerelsesresultatkode String? @map("afgørelsesresultatkode")
+  baggrundsmateriale    String?
+  opdateringsdato       String?
+  statsbudgetsag        Boolean?
+  begrundelse            String?
+  paragrafnummer         String?
+  paragraf               String?
+  afgoerelsesdato         String? @map("afgørelsesdato")
+  afgoerelse              String? @map("afgørelse")
+  raadsmoededato           String? @map("rådsmødedato")
+  lovnummer              String?
+  lovnummerdato          String?
+  retsinformationsurl    String?
+  fremsatundersagid      String?
+  deltundersagid         Int?
+}

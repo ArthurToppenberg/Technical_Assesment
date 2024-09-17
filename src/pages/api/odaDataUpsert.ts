@@ -17,6 +17,7 @@ const queryString = Object.entries(filters)
     })
     .join(' and ');
 
+
 const apiPath = `${apiPrefix}?$filter=${encodeURIComponent(queryString)}`;
 //Example: https://oda.ft.dk/api/Sag?$filter=typeid eq 3 or typeid eq 5 or typeid eq 9 and periodeid eq 160
 //const apiPath = `${apiPrefix}`

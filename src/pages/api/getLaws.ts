@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../utils/prisma'; // Adjust the import according to your project structure
 import { Law_English } from './odaDataUpsert';
-
-import prisma from '../../utils/prisma';
 
 export enum LawStatus {
     Forkastet = 3,
@@ -11,12 +10,14 @@ export enum LawStatus {
 /**
  * Inteface used to specify which laws to get.
  */
-export interface getLawsProps{
+export interface getLawsProps {
     LawStatusType: LawStatus;
 }
 
-
-export interface Laws_English_Data extends Law_English{
+/**
+ * The data retrived from the database contains id collumn
+ */
+export interface Laws_English_Data extends Law_English {
     id: number;
 }
 
@@ -33,16 +34,21 @@ function getLaws(props: getLawsProps): Promise<Laws_English_Data[]> {
     }) as Promise<Laws_English_Data[]>;
 }
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
-        const data: getLawsProps = req.body;
-        console.log(data.LawStatusType);
-        getLaws(data)
-            .then((laws) => {
-                res.status(200).json(laws);
-            })
-            .catch((error) => {
-                res.status(500).json({ message: error.message });
-            });
+        try {
+            const data: getLawsProps = req.body;
+            if (!data || !data.LawStatusType) {
+                res.status(400).json({ message: 'Invalid request body' });
+                return;
+            }
+
+            const laws = await getLaws(data);
+            res.status(200).json(laws);
+        } catch (error) {
+            res.status(500).json({ message: (error as Error).message });
+        }
+    } else {
+        res.status(405).json({ message: 'Method Not Allowed' });
     }
 }
